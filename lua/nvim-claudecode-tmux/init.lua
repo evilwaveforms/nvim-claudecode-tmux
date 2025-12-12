@@ -8,24 +8,33 @@ M.config = {
 
 local compose_buf = nil
 
-local function find_claude_pane()
+local function get_pane_cwd(pane_id)
+  local result = vim.fn.system(string.format("tmux display-message -t '%s' -p '#{pane_current_path}'", pane_id))
+  return result:gsub("%s+", "")
+end
+
+local function find_claude_pane(target_cwd)
   local result = vim.fn.system("tmux list-panes -s -F '#{pane_id} #{pane_current_command}' 2>/dev/null")
   for line in result:gmatch("[^\r\n]+") do
     local id, cmd = line:match("(%%[%d]+)%s+(.+)")
     if id and cmd == "claude" then
-      return id
+      if get_pane_cwd(id) == target_cwd then
+        return id
+      end
     end
   end
   return nil
 end
 
 local function ensure_claude_pane()
-  local pane_id = find_claude_pane()
+  local nvim_cwd = vim.fn.getcwd()
+  local pane_id = find_claude_pane(nvim_cwd)
   if pane_id then
     return pane_id
   end
-  local result = vim.fn.system(string.format(
-    "tmux split-window %s -P -F '#{pane_id}' 'claude'", M.config.split_direction))
+  local result = vim.fn.system(
+    string.format("tmux split-window %s -c '%s' -P -F '#{pane_id}' 'claude'", M.config.split_direction, nvim_cwd)
+  )
   vim.fn.system("tmux last-pane")
   return result:gsub("%s+", "")
 end
