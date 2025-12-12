@@ -33,3 +33,19 @@ Values inside `opts` are defaults. If you don't want to change them, `opts` can 
 3. A compose buffer opens at the bottom
 4. Edit the content if needed
 5. Save the buffer (`:w`) to send to Claude Code and submit
+
+## fzf.vim Integration
+
+Send relative file paths from fzf to the compose buffer:
+
+```lua
+vim.g.fzf_action = {
+  ['ctrl-c'] = function(files)
+    require('nvim-claudecode-tmux').add_files(files)
+  end,
+}
+```
+
+1. Open fzf (`Ctrl+P` or `:Files`)
+2. Select files with `Tab`
+3. Press `Ctrl+C` to add file references (e.g., `@src/main.lua`)

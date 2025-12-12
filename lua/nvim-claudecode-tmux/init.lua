@@ -144,7 +144,22 @@ function M.setup(opts)
     { desc = "Add selected text to Claude compose buffer" })
 end
 
+local function add_files(files)
+  if type(files) == "string" then
+    files = { files }
+  end
+
+  local refs = {}
+  for _, file in ipairs(files) do
+    local relative_path = vim.fn.fnamemodify(file, ":.")
+    table.insert(refs, "@" .. relative_path)
+  end
+
+  append_to_compose(table.concat(refs, "\n"))
+end
+
 M.add_reference = add_file_reference
 M.add_selection = add_selection
+M.add_files = add_files
 
 return M
