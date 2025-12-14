@@ -66,7 +66,7 @@ local function ensure_compose_buffer()
   if compose_buf and vim.api.nvim_buf_is_valid(compose_buf) then
     return
   end
-
+  ensure_claude_pane()
   compose_buf = vim.api.nvim_create_buf(false, true)
   vim.api.nvim_buf_set_name(compose_buf, "Claude Compose")
   vim.bo[compose_buf].buftype = "acwrite"
