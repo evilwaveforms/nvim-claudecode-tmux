@@ -3,6 +3,7 @@ local M = {}
 M.config = {
   keymap_reference = "<leader>cl",
   keymap_selection = "<leader>cs",
+  keymap_toggle = "<leader>cc",
   split_direction = "-h",
 }
 
@@ -91,6 +92,18 @@ local function open_compose_window()
   vim.api.nvim_win_set_height(0, 15)
 end
 
+local function toggle_compose_window()
+  if compose_buf and vim.api.nvim_buf_is_valid(compose_buf) then
+    for _, win in ipairs(vim.api.nvim_list_wins()) do
+      if vim.api.nvim_win_get_buf(win) == compose_buf then
+        vim.api.nvim_win_close(win, false)
+        return
+      end
+    end
+  end
+  open_compose_window()
+end
+
 local function append_to_compose(text)
   ensure_compose_buffer()
   local current_win = vim.api.nvim_get_current_win()
@@ -151,6 +164,9 @@ function M.setup(opts)
     { desc = "Add file reference to Claude compose buffer" })
   vim.keymap.set("v", M.config.keymap_selection, ":<C-u>lua require('nvim-claudecode-tmux').add_selection()<CR>",
     { desc = "Add selected text to Claude compose buffer" })
+  vim.keymap.set("n", M.config.keymap_toggle, function()
+    require("nvim-claudecode-tmux").toggle()
+  end, { desc = "Toggle Claude compose buffer" })
 end
 
 local function add_files(files)
@@ -170,5 +186,6 @@ end
 M.add_reference = add_file_reference
 M.add_selection = add_selection
 M.add_files = add_files
+M.toggle = toggle_compose_window
 
 return M

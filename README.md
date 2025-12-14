@@ -14,6 +14,7 @@ Values inside `opts` are defaults. If you don't want to change them, `opts` can 
     opts = {
         keymap_reference = "<leader>cl",
         keymap_selection = "<leader>cs",
+        keymap_toggle = "<leader>cc",
         split_direction = "-h",
     },
 },
@@ -23,6 +24,7 @@ Values inside `opts` are defaults. If you don't want to change them, `opts` can 
 
 | Keymap | Mode | Description |
 |--------|------|-------------|
+| `<leader>cc` | Normal | Toggle the compose buffer window |
 | `<leader>cl` | Visual | Add file reference (e.g., `@file.lua:10-20`) to compose buffer |
 | `<leader>cs` | Visual | Add selected text to compose buffer |
 
